@@ -1,0 +1,79 @@
+<html>
+  <head>
+    <script src="https://unpkg.com/peerjs@1.3.2/dist/peerjs.min.js"></script>
+    <script>
+// Common
+/////////
+const peer = new Peer();
+let serverId;
+
+// var peer = new Peer({host: '/', port: 9000});
+peer.on('error', (error) => {
+  console.error(error);
+});
+peer.on('open', (id) => {
+  console.log('open: ' + id);
+  serverId = id;
+});
+
+function clearMessage() {
+  document.getElementById('output').value = '';
+}
+
+function addMessage(message) {
+  document.getElementById('output').value += message + '\n';
+}
+
+// Master
+// *******
+let clients = [];
+
+function create() {
+  document.getElementById('server').value = serverId;
+  clearMessage();
+  addMessage('Server created.')
+  peer.on('connection', (conn) => { 
+    console.log('connection: ', conn);
+    clients.push(conn);
+  });
+  console.log('created ');
+}
+function send() {
+  	// Send messages
+    const text = document.getElementById('message').value;
+    for (let client of clients) {
+      console.log(text);
+            client.send(text);
+    }
+    addMessage(text)
+}
+
+// Slave
+/////////
+
+function connect(id) {
+  let conn = peer.connect(id);
+
+  clearMessage();
+  addMessage('Connected to server.')
+	conn.on('data', (data) => {
+	  console.log('data', data);
+    addMessage(data)
+	});
+
+}
+
+    </script>
+  </head>
+  <body>
+    Host:<br>
+    1.<button onclick="create()">Create</button><input id="server" size="50"/><br>
+    3.<input id="message" /><button onclick="send()">Send</button>
+
+    <br /><br/>
+
+    Client:<br>
+    2.<input id="conid"/><button onclick="connect(document.getElementById('conid').value)">Connect</button><br>
+    <textarea id="output" cols="50" rows="20"></textarea>
+  </body>
+</html>
