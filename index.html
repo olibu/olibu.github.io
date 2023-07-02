@@ -1,19 +1,345 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Homepage of Olibu</title>
+    <!-- Bulma Version 0.9.4-->
+    <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.4/css/bulma.min.css" />
+    <link rel="stylesheet" type="text/css" href="./css/homepage.css" />
+    <script
+      src="https://kit.fontawesome.com/2828f7885a.js"
+      integrity="sha384-WAsFbnLEQcpCk8lM1UTWesAf5rGTCvb2Y+8LvyjAAcxK1c3s5c0L+SYOgxvc6PWG"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="icon" type="image/png" href="favicon.png" />
+  </head>
+
   <body>
-My very simple homepage to provide my PWA applications. The source code of all tools can be found on my <a href="https://github.com/olibu">github page</a>.
-<ul>
-  <li>
-    <a href="/agenda/">Agenda</a><br>
-    Tool to track the agenda of a meeting.
-  </li>
-  <li>
-    <a href="/qrcoder/">QR Coder</a><br>
-    Tool to generate QR Codes.
-  </li>
-  <li>
-    <a href="/wcg/">WebClipper</a><br>
-    Tool to generate Web Clips for iOS.
-  </li>
-</ul>
-</body>
+    <!-- Begin Preloader -->
+    <div class="preloader-wrapper">
+      <div class="preloader">
+        <img src="img/preloader.gif" alt="" />
+      </div>
+    </div>
+    <!-- End Preloader-->
+    <!-- Begin Scroll Up Button -->
+
+    <form action="#home">
+      <button id="toTop" title="Go to top">
+        <i class="fas fa-angle-up"></i>
+      </button>
+    </form>
+    <!-- End Scroll Up Button -->
+
+    <!-- Begin Header -->
+    <div class="header-wrapper">
+      <!-- Begin Hero -->
+      <section class="hero is-large">
+        <!-- Begin Mobile Nav -->
+        <nav class="navbar is-fixed-top is-transparent is-hidden-desktop">
+          <!-- Begin Burger Menu -->
+          <div class="navbar-brand">
+            <div class="navbar-burger burger" data-target="mobile-nav">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+          <!-- End Burger Menu -->
+          <div id="mobile-nav" class="navbar-menu">
+            <div class="navbar-end">
+              <a class="navbar-item" href="#about-me">
+                About Me
+              </a>
+              <a class="navbar-item" href="#agenda">
+                Agenda
+              </a>
+              <a class="navbar-item" href="#qrcoder">
+                QR Coder
+              </a>
+              <a class="navbar-item" href="#webclip">
+                Web Clipper
+              </a>
+            </div>
+          </div>
+        </nav>
+        <!-- End Mobile Nav -->
+        <!-- Begin Hero Content-->
+        <div class="hero-body">
+          <div class="container has-text-centered">
+            <h1 class="subtitle">Hey there, I'm</h1>
+            <h2 class="title">Olibu</h2>
+            <h1 class="subtitle profession">A fun developer</h1>
+          </div>
+        </div>
+        <!-- End Hero Content-->
+        <!-- Begin Hero Menu -->
+        <div class="hero-foot" id="home">
+          <div class="hero-foot--wrapper">
+            <div class="columns">
+              <div class="column is-12 hero-menu-desktop has-text-centered is-fixed-top">
+                <ul>
+                  <li>
+                    <a href="#about-me">About Me</a>
+                  </li>
+                  <li>
+                    <a href="#agenda">Agenda</a>
+                  </li>
+                  <li>
+                    <a href="#qrcoder">QR Coder</a>
+                  </li>
+                  <li>
+                    <a href="#webclip">Web Clipper</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End Hero Menu -->
+      </section>
+      <!-- End Hero -->
+    </div>
+    <!-- End Header -->
+
+    <!-- Begin Main Content -->
+    <div class="main-content">
+      <!-- Begin About Me Section -->
+      <div class="section-light about-me" id="about-me">
+        <div class="container">
+          <div class="column is-12 about-me">
+            <h1 class="title has-text-centered section-title">About Me</h1>
+          </div>
+          <div class="columns is-multiline">
+            <div
+              class="column is-6 has-vertically-aligned-content"
+              data-aos="fade-right"
+            >
+              <p class="is-larger">
+                <strong>
+                  This is my personal homepage to give you some more details 
+                  about me and my projects available on github.
+                  </strong
+                >
+              </p>
+              <br />
+              <p>
+                I had been a professional software developer in the 90th.
+                In 2022 I found my love again to develop some piece of software.
+                You can find it on my <a href="https://github.com/olibu">github page</a>.
+              </p>
+              <br />
+            </div>
+            <div class="column is-6 right-image " data-aos="fade-left">
+              <img
+                class="is-rounded"
+                src="https://picsum.photos/id/366/600/375"
+                alt=""
+              />
+            </div>
+          </div>
+          <div class="column is-12">
+            <br /><br /><br /><br /><br />
+          </div>
+        </div>
+      </div>
+      <!-- End About Me Content -->
+
+      <!-- Begin Agenda Content -->
+      <div class="section-color services" id="agenda">
+        <div class="container">
+          <div class="columns is-multiline">
+            <div
+              class="column is-12 about-me"
+              data-aos="fade-in"
+              data-aos-easing="linear"
+            >
+              <h1 class="title has-text-centered section-title">Agenda</h1>
+
+              <h2 class="subtitle has-text-centered">
+                Agenda is a browser based standalone tool to track the time table of meetings.
+              </h2>
+              <br />
+            </div>
+            <div class="columns is-12">
+              <div
+                class="column is-6 has-text-centered"
+                data-aos="fade-in"
+                data-aos-easing="linear"
+              >
+                <figure class="image">
+                  <img src="https://github.com/olibu/agenda/blob/main/doc/start_meeting.gif?raw=true">
+                </figure>
+              </div>
+
+              <div
+                class="column is-6 has-text-centered"
+                data-aos="fade-in"
+                data-aos-easing="linear"
+              >
+                <p>
+                  In Agenda you can configure a list of meetings with all of the agenda entries. When a meeting is started
+                  the current agenda entry is highlighted. The rest of the time is shown and the time when the meeting will 
+                  end is shown, too.
+                </p>
+                <br />
+                <p>
+                  This app is a PWA. Thus you can view it in the online browser. Just visit <a href="./agenda/">Agenda at my homepage</a>.
+                </p>
+                <br />
+                <p>
+                  You can use the app on your PC and on your mobile device.
+                </p>
+                <br />
+                <p>
+                  If you want to use the app without an internet connection, you can store it for offline usage. 
+                  This is depending ony your browser.
+                  A detailed guide is provided <a href="https://github.com/olibu/agenda/blob/main/doc/UserGuide.md">here</a>.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End Agenda Content -->
+
+      <!-- Begin QRCoder Content -->
+      <div class="section-light skills" id="qrcoder">
+        <div class="container">
+          <div class="columns is-multiline">
+            <div
+              class="column is-12 about-me"
+              data-aos="fade-in"
+              data-aos-easing="linear"
+            >
+              <h1 class="title has-text-centered section-title">QR Coder</h1>
+
+              <h2 class="subtitle has-text-centered">
+                QR Coder is an app to easily generate QR codes.
+              </h2>
+              <br />
+            </div>
+            <div class="columns is-12">
+              <div
+                class="column is-6 has-text-centered"
+                data-aos="fade-in"
+                data-aos-easing="linear"
+              >
+                <figure class="image">
+                  <img src="https://github.com/olibu/qrcoder/raw/main/qrcoder.png">
+                </figure>
+              </div>
+
+              <div
+                class="column is-6 has-text-centered"
+                data-aos="fade-in"
+                data-aos-easing="linear"
+              >
+                <br /><br /><br />
+                <p>
+                  You can use this app to easily create QR codes for text, Wifi, contacts, phone numbers, emails and calendar invites.
+                </p>
+                <br />
+                <p>
+                  This app is a PWA. Thus you can view it in the online browser. Just visit <a href="./qrcoder/">QR Coder at my homepage</a>.
+                </p>
+                <br />
+                <p>
+                  You can use the app on your PC and on your mobile device.
+                </p>
+                <br />
+                <p>
+                  If you want to use the app without an internet connection, you can store it for offline usage. 
+                  This is depending ony your browser.
+                  More detailes about QR Coder is provided <a href="https://github.com/olibu/qrcoder">here</a>.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End QR Coder Content -->
+
+      <!-- Begin WebClip Content -->
+      <div class="section-dark services" id="webclip">
+        <div class="container">
+          <div class="columns is-multiline">
+            <div
+              class="column is-12 about-me"
+              data-aos="fade-in"
+              data-aos-easing="linear"
+            >
+              <h1 class="title has-text-centered section-title">Web Clipper</h1>
+
+              <h2 class="subtitle has-text-centered">
+                Web Clipper is an app to generate Bookmarks on the iOS homescreen.
+              </h2>
+              <br />
+            </div>
+            <div class="columns is-12">
+              <div
+                class="column is-6 has-text-centered"
+                data-aos="fade-in"
+                data-aos-easing="linear"
+              >
+                <figure class="image">
+                  <img src="https://github.com/olibu/webclipper/raw/main/WebClipper.gif">
+                </figure>
+              </div>
+
+              <div
+                class="column is-6 has-text-centered"
+                data-aos="fade-in"
+                data-aos-easing="linear"
+              >
+                <br /><br /><br />
+                <p>
+                  You can use this app to create bookmarks for web pages on iOS with a custom icon and in fullscreen.
+                </p>
+                <br />
+                <p>
+                  This app is a PWA. Thus you can view it in the online browser. Just visit <a href="./wcg/">Web Clipper at my homepage</a>.
+                </p>
+                <br />
+                <p>
+                  You can use the app on your PC and on your mobile device.
+                </p>
+                <br />
+                <p>
+                  If you want to use the app without an internet connection, you can store it for offline usage. 
+                  This is depending ony your browser.
+                  More detailes about QR Coder is provided <a href="https://github.com/olibu/webclipper">here</a>.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End webclip Content -->
+
+    <!-- End Main Content -->
+    </div>
+
+    <!-- Begin Footer -->
+    <div class="footer">
+      <p>
+        This page is powered by <strong class="white">Bulma</strong>.
+      </p>
+    </div>
+    <!-- End Footer -->
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="./js/homepage.js"></script>
+    <link href="https://cdn.rawgit.com/michalsnik/aos/2.1.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.rawgit.com/michalsnik/aos/2.1.1/dist/aos.js"></script>
+    <script>
+      AOS.init({
+        easing: "ease-out",
+        duration: 800,
+      });
+    </script>
+  </body>
 </html>
