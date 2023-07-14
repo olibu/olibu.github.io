@@ -20,8 +20,8 @@ html {
 }
 
 .hero {
-  background-image: url(https://picsum.photos/id/381/1920/1080);
-  background: linear-gradient(rgba(31, 44, 108, 0.65), rgba(31, 44, 108, 0.65)), rgba(0, 0, 0, 0.55) url("https://picsum.photos/id/381/1920/1080") no-repeat;
+  background-image: url('../img/background.jpg');
+  background: linear-gradient(rgba(31, 44, 108, 0.65), rgba(31, 44, 108, 0.65)), rgba(0, 0, 0, 0.55) url('../img/background.jpg') no-repeat;
   background-attachment: fixed;
   background-size: cover;
   color: white;
@@ -45,51 +45,6 @@ html {
   padding-top: 50px;
   font-size: 1.7rem;
   text-transform: uppercase;
-}
-
-.hero .hero-foot {
-  height: 50px;
-  background: white;
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.082);
-}
-
-@media (max-width: 599px) {
-  .hero .hero-foot {
-    display: none;
-  }
-}
-
-.hero .hero-foot .hero-foot--wrapper {
-  margin: 7px auto;
-  height: 50px;
-}
-
-.hero .hero-foot .hero-foot--wrapper .hero-menu-desktop {
-  line-height: 38px;
-  font-weight: 600;
-  text-transform: lowercase;
-  letter-spacing: 1px;
-  font-size: 1rem;
-}
-
-.hero .hero-foot .hero-foot--wrapper .hero-menu-desktop ul li {
-  display: inline-block;
-  padding-right: 15px;
-  padding-left: 15px;
-}
-
-.hero .hero-foot .hero-foot--wrapper .hero-menu-desktop ul li.is-active a {
-  border-bottom: 2px solid #1f2c6c;
-}
-
-.hero .hero-foot .hero-foot--wrapper .hero-menu-desktop ul li a {
-  color: #1f2c6c;
-}
-
-.hero .hero-foot .hero-foot--wrapper .hero-menu-desktop ul li a:hover {
-  color: #1f2c6c;
-  transition: all .2s ease-in-out;
-  border-bottom: 2px solid #1f2c6c;
 }
 
 .main-content {
@@ -305,7 +260,7 @@ body.preloader-site {
 .preloader-wrapper {
   height: 100%;
   width: 100%;
-  background: #1f2c6c;
+  background: #9fa9dc;
   position: fixed;
   top: 0;
   left: 0;

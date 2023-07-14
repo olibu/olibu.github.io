@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="has-navbar-fixed-top">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -20,52 +20,51 @@
     <!-- Begin Preloader -->
     <div class="preloader-wrapper">
       <div class="preloader">
-        <img src="img/preloader.gif" alt="" />
+        <img src="./img/loader.svg" alt="" />
       </div>
     </div>
     <!-- End Preloader-->
     <!-- Begin Scroll Up Button -->
 
-    <form action="#home">
+    <form action="#about-me">
       <button id="toTop" title="Go to top">
         <i class="fas fa-angle-up"></i>
       </button>
     </form>
     <!-- End Scroll Up Button -->
 
+    <!-- Nav bar -->
+    <nav class="navbar is-fixed-top has-shadow" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">    
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="myNavbar">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div id="myNavbar" class="navbar-menu">
+        <div class="navbar-end">
+          <a class="navbar-item" href="#about-me">
+            About Me
+          </a>
+          <a class="navbar-item" href="#agenda">
+            Agenda
+          </a>
+          <a class="navbar-item" href="#qrcoder">
+            QR Coder
+          </a>
+          <a class="navbar-item" href="#webclip">
+            Web Clipper
+          </a>
+        </div>
+      </div>
+    </nav>
+
     <!-- Begin Header -->
     <div class="header-wrapper">
       <!-- Begin Hero -->
       <section class="hero is-large">
-        <!-- Begin Mobile Nav -->
-        <nav class="navbar is-fixed-top is-transparent is-hidden-desktop">
-          <!-- Begin Burger Menu -->
-          <div class="navbar-brand">
-            <div class="navbar-burger burger" data-target="mobile-nav">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </div>
-          <!-- End Burger Menu -->
-          <div id="mobile-nav" class="navbar-menu">
-            <div class="navbar-end">
-              <a class="navbar-item" href="#about-me">
-                About Me
-              </a>
-              <a class="navbar-item" href="#agenda">
-                Agenda
-              </a>
-              <a class="navbar-item" href="#qrcoder">
-                QR Coder
-              </a>
-              <a class="navbar-item" href="#webclip">
-                Web Clipper
-              </a>
-            </div>
-          </div>
-        </nav>
-        <!-- End Mobile Nav -->
         <!-- Begin Hero Content-->
         <div class="hero-body">
           <div class="container has-text-centered">
@@ -74,31 +73,6 @@
             <h1 class="subtitle profession">A fun developer</h1>
           </div>
         </div>
-        <!-- End Hero Content-->
-        <!-- Begin Hero Menu -->
-        <div class="hero-foot" id="home">
-          <div class="hero-foot--wrapper">
-            <div class="columns">
-              <div class="column is-12 hero-menu-desktop has-text-centered is-fixed-top">
-                <ul>
-                  <li>
-                    <a href="#about-me">About Me</a>
-                  </li>
-                  <li>
-                    <a href="#agenda">Agenda</a>
-                  </li>
-                  <li>
-                    <a href="#qrcoder">QR Coder</a>
-                  </li>
-                  <li>
-                    <a href="#webclip">Web Clipper</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- End Hero Menu -->
       </section>
       <!-- End Hero -->
     </div>
@@ -110,10 +84,11 @@
       <div class="section-light about-me" id="about-me">
         <div class="container">
           <div class="column is-12 about-me">
+            <br />
             <h1 class="title has-text-centered section-title">About Me</h1>
           </div>
           <div class="columns is-multiline">
-            <div
+              <div
               class="column is-6 has-vertically-aligned-content"
               data-aos="fade-right"
             >
@@ -135,13 +110,13 @@
             <div class="column is-6 right-image " data-aos="fade-left">
               <img
                 class="is-rounded"
-                src="https://picsum.photos/id/366/600/375"
+                src="./img/keyboard.jpg"
                 alt=""
               />
             </div>
           </div>
           <div class="column is-12">
-            <br /><br /><br /><br /><br />
+            <br /><br /><br /><br /><br /><br /><br /><br /><br />
           </div>
         </div>
       </div>
@@ -227,16 +202,6 @@
                 data-aos="fade-in"
                 data-aos-easing="linear"
               >
-                <figure class="image">
-                  <img src="https://github.com/olibu/qrcoder/raw/main/qrcoder.png">
-                </figure>
-              </div>
-
-              <div
-                class="column is-6 has-text-centered"
-                data-aos="fade-in"
-                data-aos-easing="linear"
-              >
                 <br /><br /><br />
                 <p>
                   You can use this app to easily create QR codes for text, Wifi, contacts, phone numbers, emails and calendar invites.
@@ -255,6 +220,15 @@
                   This is depending ony your browser.
                   More detailes about QR Coder is provided <a href="https://github.com/olibu/qrcoder">here</a>.
                 </p>
+              </div>
+              <div
+                class="column is-6 has-text-centered"
+                data-aos="fade-in"
+                data-aos-easing="linear"
+              >
+                <figure class="image">
+                  <img src="https://github.com/olibu/qrcoder/raw/main/qrcoder.png">
+                </figure>
               </div>
             </div>
           </div>

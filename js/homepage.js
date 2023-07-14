@@ -34,9 +34,9 @@ document.addEventListener("DOMContentLoaded", function() {
         var $target = document.getElementById(target);
         // Toggle the class on both the "navbar-burger" and the "navbar-menu"
         // $el.classList.toggle("is-active");
-        var $burger = document.getElementsByClassName("burger")[0];
+        var $burger = document.getElementsByClassName("navbar-burger")[0];
         $burger.classList.toggle("is-active");
-        var $navbar = document.getElementById("mobile-nav");
+        var $navbar = document.getElementById("myNavbar");
         $navbar.classList.toggle("is-active");
       });
     });
