@@ -29,5 +29,6 @@ jobs:
       run: |
         git config --global user.name "Continuous Integration"
         git config --global user.email "cicd@users.noreply.github.com"
+        echo -e "a\n*\nq\n"|git add -i
         git commit -a -m "asn1js release deployment"
         git push
