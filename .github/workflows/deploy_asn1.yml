@@ -19,7 +19,7 @@ jobs:
 
     - uses: actions/checkout@v4
       with:
-        repository: 'https://github.com/olibu/asn1js.git'
+        repository: 'olibu/asn1js.git'
         ref: 'release'
     
 
