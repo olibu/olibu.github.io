@@ -7,9 +7,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env: 
-      CI_COMMIT_MESSAGE: asn1js release deployment
-      CI_COMMIT_AUTHOR: Continuous Integration
     steps:
     - uses: actions/checkout@v4
 
@@ -28,11 +25,9 @@ jobs:
       run: ls -R
 
     # Commit and push all changed files.
-    - name: GIT Commit Build Artifacts (coverage, dist, devdist, docs)
+    - name: GIT Commit
       run: |
-        git diff --compact-summary 
-       
-# git config --global user.name "${{ env.CI_COMMIT_AUTHOR }}"
-# git config --global user.email "cicd@users.noreply.github.com"
-# git commit -a -m "${{ env.CI_COMMIT_MESSAGE }}"
-# git push
+        git config --global user.name "Continuous Integration"
+        git config --global user.email "cicd@users.noreply.github.com"
+        git commit -a -m "asn1js release deployment"
+        git push
