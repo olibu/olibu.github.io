@@ -19,12 +19,16 @@ jobs:
     - name: cleanup directory
       run: rm -rf *
 
-    - uses: actions/checkout@v4
-      with:
-        repository: 'olibu/asn1js.git'
-        ref: 'release'
+    - name: download latest asn1js release
+      run: curl -L https://github.com/olibu/asn1js/archive/release.tar.gz | tar zxf -
 
-    - name: show content of directory
+    - name: move content to the right place
+      run: mv asn1js-release/* ./
+
+    - name: cleanup extraced archive folder
+      run: rm -rf asn1js-release
+
+    - name: show directory
       run: ls -l
 
     # Commit and push all changed files.
