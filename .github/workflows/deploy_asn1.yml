@@ -13,9 +13,16 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: show directory
+      run: ls -l
+
     # change to the asn1 directory
     - name: change directory
       run: cd asn1js
+
+    - name: show directory
+      run: ls -l
+
     - name: cleanup directory
       run: rm -rf *
 
