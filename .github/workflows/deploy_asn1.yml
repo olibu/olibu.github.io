@@ -16,12 +16,16 @@ jobs:
     # change to the asn1 directory
     - name: change directory
       run: cd asn1js
+    - name: cleanup directory
+      run: rm -rf *
 
     - uses: actions/checkout@v4
       with:
         repository: 'olibu/asn1js.git'
         ref: 'release'
-    
+
+    - name: show content of directory
+      run: ls -l
 
     # Commit and push all changed files.
 #    - name: GIT Commit Build Artifacts (coverage, dist, devdist, docs)
