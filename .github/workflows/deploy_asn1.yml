@@ -25,11 +25,11 @@ jobs:
         mv asn1js-release/* ./
         rm -rf asn1js-release
 
-    - name: show directory
-      run: ls -l
-
     - name: change directory
       run: cd ..
+
+    - name: show directory
+      run: ls -R
 
     # Commit and push all changed files.
     - name: GIT Commit Build Artifacts (coverage, dist, devdist, docs)
