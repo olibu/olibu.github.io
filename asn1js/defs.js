@@ -1,5 +1,5 @@
 // ASN.1 RFC definitions matcher
-// Copyright (c) 2023-2023 Lapo Luchini <lapo@lapo.it>
+// Copyright (c) 2023-2024 Lapo Luchini <lapo@lapo.it>
 
 // Permission to use, copy, modify, and/or distribute this software for any
 // purpose with or without fee is hereby granted, provided that the above
@@ -13,13 +13,7 @@
 // ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 // OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-(typeof define != 'undefined' ? define : function (factory) { 'use strict';
-    if (typeof module == 'object') module.exports = factory(function (name) { return require(name); });
-    else window.defs = factory(function (name) { return window[name.substring(2)]; });
-})(function (require) {
-'use strict';
-
-const rfc = require('./rfcdef');
+import { rfcdef } from './rfcdef.js';
 
 function translate(def, tn, stats) {
     if (def?.type == 'tag' && !def.explicit)
@@ -29,7 +23,7 @@ function translate(def, tn, stats) {
         try {
             // hope current OIDs contain the type name (will need to parse from RFC itself)
             def = Defs.searchType(firstUpper(stats.defs[def.definedBy][1]));
-        } catch (e) {}
+        } catch (e) { /*ignore*/ }
     while (def?.type == 'defined' || def?.type?.type == 'defined') {
         const name = def?.type?.type ? def.type.name : def.name;
         def = Object.assign({}, def);
@@ -37,7 +31,8 @@ function translate(def, tn, stats) {
     }
     if (def?.type?.name == 'CHOICE') {
         for (let c of def.type.content) {
-            c = translate(c);
+            if (tn != c.type.name && tn != c.name)
+                c = translate(c);
             if (tn == c.type.name || tn == c.name) {
                 def = Object.assign({}, def);
                 def.type = c.type.name ? c.type : c;
@@ -55,14 +50,14 @@ function firstUpper(s) {
     return s[0].toUpperCase() + s.slice(1);
 }
 
-class Defs {
+export class Defs {
 
     static moduleAndType(mod, name) {
         return Object.assign({ module: { oid: mod.oid, name: mod.name, source: mod.source } }, mod.types[name]);
     }
 
     static searchType(name) {
-        for (const mod of Object.values(rfc))
+        for (const mod of Object.values(rfcdef))
             if (name in mod.types) {
                 // console.log(name + ' found in ' + r.name);
                 // return r.types[name];
@@ -109,7 +104,7 @@ class Defs {
                         } else if (type?.definedBy && stats.defs?.[type.definedBy]?.[1]) { // hope current OIDs contain the type name (will need to parse from RFC itself)
                             try {
                                 type = Defs.searchType(firstUpper(stats.defs[type.definedBy][1]));
-                            } catch (e) {}
+                            } catch (e) { /*ignore*/ }
                         }
                     }
                 }
@@ -121,17 +116,15 @@ class Defs {
 
 }
 
-Defs.RFC = rfc;
+Defs.RFC = rfcdef;
 
 Defs.commonTypes = [
     [ 'X.509 certificate', '1.3.6.1.5.5.7.0.18', 'Certificate' ], 
+    [ 'X.509 public key info', '1.3.6.1.5.5.7.0.18', 'SubjectPublicKeyInfo' ],
     [ 'CMS / PKCS#7 envelope', '1.2.840.113549.1.9.16.0.14', 'ContentInfo' ],
+    [ 'PKCS#1 RSA private key', '1.2.840.113549.1.1.0.1', 'RSAPrivateKey' ],
     [ 'PKCS#8 encrypted private key', '1.2.840.113549.1.8.1.1', 'EncryptedPrivateKeyInfo' ],
     [ 'PKCS#8 private key', '1.2.840.113549.1.8.1.1', 'PrivateKeyInfo' ],
     [ 'PKCS#10 certification request', '1.2.840.113549.1.10.1.1', 'CertificationRequest' ],
     [ 'CMP PKI Message', '1.3.6.1.5.5.7.0.16', 'PKIMessage' ],
-].map(arr => ({ description: arr[0], ...Defs.moduleAndType(rfc[arr[1]], arr[2]) }));
-
-return Defs;
-
-});
+].map(arr => ({ description: arr[0], ...Defs.moduleAndType(rfcdef[arr[1]], arr[2]) }));
