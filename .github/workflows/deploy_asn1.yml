@@ -16,24 +16,13 @@ jobs:
     - name: show directory
       run: ls -l
 
-    # change to the asn1 directory
-    - name: change directory
-      run: cd asn1js
-
-    - name: show directory
-      run: ls -l
-
-    - name: cleanup directory
-      run: rm -rf *
+    - name: cleanup asn1js directory
+      run: rm -rf asn1js
 
     - name: download latest asn1js release
       run: |
         curl -L https://github.com/olibu/asn1js/archive/release.tar.gz | tar zxf -
-        mv asn1js-release/* ./
-        rm -rf asn1js-release
-
-    - name: change directory
-      run: cd ..
+        mv asn1js-release asn1js
 
     - name: show directory
       run: ls -R
