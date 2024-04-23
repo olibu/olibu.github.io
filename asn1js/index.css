@@ -19,6 +19,7 @@
     --dump-bg-color: #C0C0C0;
     --dump-border-color: #E0E0E0;
     --hover-bg-color: #E0E0E0;
+    --zoom-fix: -1px;
 }
 html, body {
     background-color: var(--page-bg-color);
@@ -137,6 +138,7 @@ header {
     display: block;
 }
 .name {
+    margin-right: 1em;
     color: var(--preview-border-color);
 }
 .name.id {
@@ -157,6 +159,7 @@ header {
     display: block;
 }
 .preview {
+    margin-left: 1em;
     color: var(--preview-border-color);
     font-weight: normal;
 }
@@ -164,6 +167,9 @@ header {
     margin-left: 1em;
     color: var(--preview-bg-color);
     font-weight: normal;
+}
+.spaces {
+    font-size: 0px;
 }
 #tree {
     font-family: monospace;
@@ -215,7 +221,7 @@ header {
 }
 .treecollapse {
     --spacing: 1.5rem;
-    --radius: 8px;
+    --radius: 7px;
     padding-inline-start: 0px;
 }
   
@@ -231,7 +237,7 @@ header {
 }
 
 .treecollapse ul li{
-    border-left: 1px solid #ddd;
+    border-left: 1px solid #999;
 }
 
 .treecollapse ul li:last-child{
@@ -243,10 +249,10 @@ header {
     display: block;
     position: absolute;
     top: calc(var(--spacing) / -1.6);
-    left: -1px;
+    left: var(--zoom-fix);
     width: calc(var(--spacing) + 2px);
     height: calc(var(--spacing) + 1px);
-    border: solid #ddd;
+    border: solid #999;
     border-width: 0 0 1px 1px;
 }
 
@@ -280,6 +286,7 @@ header {
 
 .treecollapse summary::before{
     z-index: 1;
+    top: 1px;
     background: url('tree-icon-light.svg');
 }
 
