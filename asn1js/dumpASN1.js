@@ -8,7 +8,8 @@ import { Defs } from './defs.js';
 const
     colYellow = '\x1b[33m',
     colBlue = '\x1b[34m',
-    colReset = '\x1b[0m';
+    colReset = '\x1b[0m',
+    reDataURI = /^data:(?:[a-z-]+[/][a-z.+-]+;)?base64,([A-Za-z0-9+/=\s]+)$/;
 
 function print(value, indent) {
     if (indent === undefined) indent = '';
@@ -40,7 +41,11 @@ function print(value, indent) {
     return s;
 }
 
-let content = fs.readFileSync(process.argv[2]);
+const filename = process.argv[2];
+const match = reDataURI.exec(filename);
+let content = match
+    ? Buffer.from(match[1])
+    : fs.readFileSync(filename);
 try { // try PEM first
     content = Base64.unarmor(content);
 } catch (e) { // try DER/BER then
@@ -48,22 +53,26 @@ try { // try PEM first
 let result = ASN1.decode(content);
 content = null;
 const t0 = performance.now();
-const types = Defs.commonTypes
-    .map(type => {
-        const stats = Defs.match(result, type);
-        return { type, match: stats.recognized / stats.total };
-    })
-    .sort((a, b) => b.match - a.match);
-const t1 = performance.now();
-console.log('Parsed in ' + (t1 - t0).toFixed(2) + ' ms; possible types:');
-for (const t of types)
-    console.log((t.match * 100).toFixed(2).padStart(6) + '% ' + t.type.description);
-Defs.match(result, types[0].type);
-// const stats = Defs.match(result, types[0].type);
-// console.log('Stats:', stats);
-console.log('Parsed as:', result.def);
-// const type = searchType(process.argv[2]);
-// const stats = applyDef(result, type);
+if (process.argv.length == 5) {
+    Defs.match(result, Defs.moduleAndType(Defs.RFC[process.argv[3]], process.argv[4]));
+} else {
+    const types = Defs.commonTypes
+        .map(type => {
+            const stats = Defs.match(result, type);
+            return { type, match: stats.recognized / stats.total };
+        })
+        .sort((a, b) => b.match - a.match);
+    const t1 = performance.now();
+    console.log('Parsed in ' + (t1 - t0).toFixed(2) + ' ms; possible types:');
+    for (const t of types)
+        console.log((t.match * 100).toFixed(2).padStart(6) + '% ' + t.type.description);
+    Defs.match(result, types[0].type);
+    // const stats = Defs.match(result, types[0].type);
+    // console.log('Stats:', stats);
+    console.log('Parsed as:', result.def);
+    // const type = searchType(process.argv[2]);
+    // const stats = applyDef(result, type);
+}
 console.log(print(result));
 // console.log('Stats:', (stats.recognized * 100 / stats.total).toFixed(2) + '%');
 // // print(result, searchType(process.argv[2]), stats);

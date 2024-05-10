@@ -15,7 +15,6 @@ const
     area = id('area'),
     file = id('file'),
     examples = id('examples'),
-    selectTheme = id('theme-select'),
     selectDefs = id('definitions'),
     selectTag = id('tags');
 
@@ -47,10 +46,7 @@ function show(asn1) {
     ul.appendChild(asn1.toDOM());
     if (wantHex.checked) dump.appendChild(asn1.toHexDOM(undefined, trimHex.checked));
 }
-function decode(der, offset) {
-    // store the DER buffer of asn1 in window to copy it completely into clipboard on dumpcopy
-    window.derBuffer = der;
-
+export function decode(der, offset) {
     offset = offset || 0;
     try {
         const asn1 = ASN1DOM.decode(der, offset);
@@ -109,7 +105,7 @@ function decode(der, offset) {
         text(tree, e);
     }
 }
-function decodeText(val) {
+export function decodeText(val) {
     try {
         let der = reHex.test(val) ? Hex.decode(val) : Base64.unarmor(val);
         decode(der);
@@ -118,7 +114,7 @@ function decodeText(val) {
         dump.innerHTML = '';
     }
 }
-function decodeBinaryString(str) {
+export function decodeBinaryString(str) {
     let der;
     try {
         if (reHex.test(str)) der = Hex.decode(str);
@@ -131,59 +127,39 @@ function decodeBinaryString(str) {
     }
 }
 // set up buttons
-id('butDecode').onclick = function () {
-    decodeText(area.value);
+const butClickHandlers = {
+    butDecode: () => {
+        decodeText(area.value);
+    },
+    butClear: () => {
+        area.value = '';
+        file.value = '';
+        tree.innerHTML = '';
+        dump.innerHTML = '';
+        selectDefs.innerHTML = '';
+        hash = window.location.hash = '';
+    },
+    butExample: () => {
+        console.log('Loading example:', examples.value);
+        let request = new XMLHttpRequest();
+        request.open('GET', 'examples/' + examples.value, true);
+        request.onreadystatechange = function () {
+            if (this.readyState !== 4) return;
+            if (this.status >= 200 && this.status < 400) {
+                area.value = this.responseText;
+                decodeText(this.responseText);
+            } else {
+                console.log('Error loading example.');
+            }
+        };
+        request.send();
+    },
 };
-id('butClear').onclick = function () {
-    area.value = '';
-    file.value = '';
-    tree.innerHTML = '';
-    dump.innerHTML = '';
-    selectDefs.innerHTML = '';
-    hash = window.location.hash = '';
-};
-id('butExample').onclick = function () {
-    console.log('Loading example:', examples.value);
-    let request = new XMLHttpRequest();
-    request.open('GET', 'examples/' + examples.value, true);
-    request.onreadystatechange = function () {
-        if (this.readyState !== 4) return;
-        if (this.status >= 200 && this.status < 400) {
-            area.value = this.responseText;
-            decodeText(this.responseText);
-        } else {
-            console.log('Error loading example.');
-        }
-    };
-    request.send();
-};
-// set dark theme depending on OS settings
-function setTheme() {
-    let storedTheme = localStorage.getItem('theme');
-    let theme = 'os';
-    if (storedTheme)
-        theme = storedTheme;
-    selectTheme.value = theme;
-    if (theme == 'os') {
-        let prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-        theme = prefersDarkScheme.matches ? 'dark': 'light';
-    }
-    if (theme == 'dark') {
-        const css1 = id('theme-base');
-        const css2 = css1.cloneNode();
-        css2.id = 'theme-override';
-        css2.href = 'index-' + theme + '.css';
-        css1.parentElement.appendChild(css2);
-    } else {
-        const css2 = id('theme-override');
-        if (css2) css2.remove();
-    }
+for (const [name, onClick] of Object.entries(butClickHandlers)) {
+    let elem = id(name);
+    if (elem)
+        elem.onclick = onClick;
 }
-setTheme();
-selectTheme.addEventListener('change', function () {
-    localStorage.setItem('theme', selectTheme.value);
-    setTheme();
-});
 // this is only used if window.FileReader
 function read(f) {
     area.value = ''; // clear text area, will get b64 content
@@ -252,4 +228,3 @@ if (window.devicePixelRatio >= 2  ) {
     let treecollapse = document.querySelector(':root');
     treecollapse.style.setProperty('--zoom-fix', '-1.5px');
 }
-console.log(window.devicePixelRatio);
