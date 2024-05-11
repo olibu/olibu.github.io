@@ -15,6 +15,9 @@ if (theme == 'os') {
 }
 document.documentElement.style['color-scheme'] = theme
 document.querySelector('html').setAttribute('data-theme', theme)
+let bgColor = getComputedStyle(document.documentElement).getPropertyValue('--main-bg-color');
+let metaThemeColor = document.querySelector('meta[name=theme-color]');
+metaThemeColor.setAttribute('content', bgColor);
 }
 // activate selected theme
 let theme = 'os';
