@@ -1,5 +1,5 @@
 // ASN.1 JavaScript decoder
-// Copyright (c) 2008-2023 Lapo Luchini <lapo@lapo.it>
+// Copyright (c) 2008-2024 Lapo Luchini <lapo@lapo.it>
 
 // Permission to use, copy, modify, and/or distribute this software for any
 // purpose with or without fee is hereby granted, provided that the above
@@ -13,15 +13,10 @@
 // ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 // OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-(typeof define != 'undefined' ? define : function (factory) { 'use strict';
-    if (typeof module == 'object') module.exports = factory(function (name) { return require(name); });
-    else window.asn1 = factory(function (name) { return window[name.substring(2)]; });
-})(function (require) {
-'use strict';
+import { Int10 } from './int10.js';
+import { oids } from './oids.js';
 
 const
-    Int10 = require('./int10'),
-    oids = require('./oids'),
     ellipsis = '\u2026',
     reTimeS =     /^(\d\d)(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([01]\d|2[0-3])(?:([0-5]\d)(?:([0-5]\d)(?:[.,](\d{1,3}))?)?)?(Z|(-(?:0\d|1[0-2])|[+](?:0\d|1[0-4]))([0-5]\d)?)?$/,
     reTimeL = /^(\d\d\d\d)(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])([01]\d|2[0-3])(?:([0-5]\d)(?:([0-5]\d)(?:[.,](\d{1,3}))?)?)?(Z|(-(?:0\d|1[0-2])|[+](?:0\d|1[0-4]))([0-5]\d)?)?$/,
@@ -43,7 +38,7 @@ const
         ['', ''],
         ['OUou', 'ŐŰőű'], // Double Acute
         ['AEIUaeiu', 'ĄĘĮŲąęįų'], // Ogonek
-        ['CDELNRSTZcdelnrstz', 'ČĎĚĽŇŘŠŤŽčďěľňřšťž'] // Caron
+        ['CDELNRSTZcdelnrstz', 'ČĎĚĽŇŘŠŤŽčďěľňřšťž'], // Caron
     ];
 
 function stringCut(str, len) {
@@ -77,17 +72,21 @@ class Stream {
         if (pos === undefined)
             pos = this.pos++;
         if (pos >= this.enc.length)
-            throw 'Requesting byte offset ' + pos + ' on a stream of length ' + this.enc.length;
+            throw new Error('Requesting byte offset ' + pos + ' on a stream of length ' + this.enc.length);
         return (typeof this.enc == 'string') ? this.enc.charCodeAt(pos) : this.enc[pos];
     }
     hexByte(b) {
         return hexDigits.charAt((b >> 4) & 0xF) + hexDigits.charAt(b & 0xF);
     }
-    hexDump(start, end, raw) {
+    /** Hexadecimal dump.
+     * @param type 'raw', 'byte' or 'dump' */
+    hexDump(start, end, type = 'dump') {
         let s = '';
         for (let i = start; i < end; ++i) {
+            if (type == 'byte' && i > start)
+                s += ' ';
             s += this.hexByte(this.get(i));
-            if (raw !== true)
+            if (type == 'dump')
                 switch (i & 0xF) {
                 case 0x7: s += '  '; break;
                 case 0xF: s += '\n'; break;
@@ -195,7 +194,7 @@ class Stream {
         let s = this.parseStringISO(start, end).str,
             m = (shortYear ? reTimeS : reTimeL).exec(s);
         if (!m)
-            return 'Unrecognized time: ' + s;
+            throw new Error('Unrecognized time: ' + s);
         if (shortYear) {
             // to avoid querying the timer, use the fixed range [1970, 2069]
             // it will conform with ITU X.400 [-10, +40] sliding window until 2030
@@ -250,7 +249,7 @@ class Stream {
     parseBitString(start, end, maxLength) {
         let unusedBits = this.get(start);
         if (unusedBits > 7)
-            throw 'Invalid BitString with unusedBits=' + unusedBits;
+            throw new Error('Invalid BitString with unusedBits=' + unusedBits);
         let lenBit = ((end - start - 1) << 3) - unusedBits,
             s = '';
         for (let i = start + 1; i < end; ++i) {
@@ -371,9 +370,9 @@ class ASN1Tag {
     }
 }
 
-class ASN1 {
+export class ASN1 {
     constructor(stream, header, length, tag, tagLen, sub) {
-        if (!(tag instanceof ASN1Tag)) throw 'Invalid tag value.';
+        if (!(tag instanceof ASN1Tag)) throw new Error('Invalid tag value.');
         this.stream = stream;
         this.header = header;
         this.length = length;
@@ -490,7 +489,16 @@ class ASN1 {
     }
     toPrettyString(indent) {
         if (indent === undefined) indent = '';
-        let s = indent + this.typeName() + ' @' + this.stream.pos;
+        let s = indent;
+        if (this.def) {
+            if (this.def.id)
+                s += this.def.id + ' ';
+            if (this.def.name && this.def.name != this.typeName().replace(/_/g, ' '))
+                s+= this.def.name + ' ';
+            if (this.def.mismatch)
+                s += '[?] ';
+        }
+        s += this.typeName() + ' @' + this.stream.pos;
         if (this.length >= 0)
             s += '+';
         s += this.length;
@@ -522,9 +530,12 @@ class ASN1 {
     posLen() {
         return this.stream.pos + this.tagLen;
     }
-    toHexString() {
-        return this.stream.hexDump(this.posStart(), this.posEnd(), true);
+    /** Hexadecimal dump of the node.
+     * @param type 'raw', 'byte' or 'dump' */
+    toHexString(type = 'raw') {
+        return this.stream.hexDump(this.posStart(), this.posEnd(), type);
     }
+    /** Base64 dump of the node. */
     toB64String() {
         return this.stream.b64Dump(this.posStart(), this.posEnd());
     }
@@ -536,7 +547,7 @@ class ASN1 {
         if (len === 0) // long form with length 0 is a special case
             return null; // undefined length
         if (len > 6) // no reason to use Int10, as it would be a huge buffer anyways
-            throw 'Length over 48 bits not supported at position ' + (stream.pos - 1);
+            throw new Error('Length over 48 bits not supported at position ' + (stream.pos - 1));
         buf = 0;
         for (let i = 0; i < len; ++i)
             buf = (buf * 256) + stream.get();
@@ -544,7 +555,7 @@ class ASN1 {
     }
     static decode(stream, offset, type = ASN1) {
         if (!(type == ASN1 || type.prototype instanceof ASN1))
-            throw 'Must pass a class that extends ASN1';
+            throw new Error('Must pass a class that extends ASN1');
         if (!(stream instanceof Stream))
             stream = new Stream(stream, offset || 0);
         let streamStart = new Stream(stream),
@@ -560,11 +571,11 @@ class ASN1 {
                     // definite length
                     let end = start + len;
                     if (end > stream.enc.length)
-                        throw 'Container at offset ' + start +  ' has a length of ' + len + ', which is past the end of the stream';
+                        throw new Error('Container at offset ' + start +  ' has a length of ' + len + ', which is past the end of the stream');
                     while (stream.pos < end)
                         sub[sub.length] = type.decode(stream);
                     if (stream.pos != end)
-                        throw 'Content size is not correct for container at offset ' + start;
+                        throw new Error('Content size is not correct for container at offset ' + start);
                 } else {
                     // undefined length
                     try {
@@ -576,7 +587,7 @@ class ASN1 {
                         }
                         len = start - stream.pos; // undefined lengths are represented as negative values
                     } catch (e) {
-                        throw 'Exception while decoding undefined length content at offset ' + start + ': ' + e;
+                        throw new Error('Exception while decoding undefined length content at offset ' + start + ': ' + e);
                     }
                 }
             };
@@ -588,11 +599,17 @@ class ASN1 {
             try {
                 if (tag.tagNumber == 0x03)
                     if (stream.get() != 0)
-                        throw 'BIT STRINGs with unused bits cannot encapsulate.';
+                        throw new Error('BIT STRINGs with unused bits cannot encapsulate.');
                 getSub();
-                for (let i = 0; i < sub.length; ++i)
-                    if (sub[i].tag.isEOC())
-                        throw 'EOC is not supposed to be actual content.';
+                for (let s of sub) {
+                    if (s.tag.isEOC())
+                        throw new Error('EOC is not supposed to be actual content.');
+                    try {
+                        s.content();
+                    } catch (e) {
+                        throw new Error('Unable to parse content: ' + e);
+                    }
+                }
             } catch (e) {
                 // but silently ignore when they don't
                 sub = null;
@@ -601,14 +618,10 @@ class ASN1 {
         }
         if (sub === null) {
             if (len === null)
-                throw "We can't skip over an invalid tag with undefined length at offset " + start;
+                throw new Error("We can't skip over an invalid tag with undefined length at offset " + start);
             stream.pos = start + Math.abs(len);
         }
         return new type(streamStart, header, len, tag, tagLen, sub);
     }
 
 }
-
-return ASN1;
-
-});

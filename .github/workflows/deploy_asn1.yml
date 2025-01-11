@@ -1,0 +1,34 @@
+# This is a workflow to deploy the latest code from the asn1js rease branch
+name: asn1js release workflow
+
+on:
+  workflow_dispatch:
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: show directory
+      run: ls -l
+
+    - name: cleanup asn1js directory
+      run: rm -rf asn1js
+
+    - name: download latest asn1js release
+      run: |
+        curl -L https://github.com/olibu/asn1js/archive/release.tar.gz | tar zxf -
+        mv asn1js-release asn1js
+
+    - name: show directory
+      run: ls -R
+
+    # Commit and push all changed files.
+    - name: GIT Commit
+      run: |
+        git config --global user.name "Continuous Integration"
+        git config --global user.email "cicd@users.noreply.github.com"
+        echo -e "a\n*\nq\n"|git add -i
+        git commit -a -m "asn1js release deployment"
+        git push

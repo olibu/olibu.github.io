@@ -1,16 +1,10 @@
-(typeof define != 'undefined' ? define : function (factory) { 'use strict';
-    if (typeof module == 'object') factory(function (name) { return require(name); });
-    else factory(function (name) { return window[name.substring(2)]; });
-})(function (require) {
-'use strict';
+import { ASN1DOM } from './dom.js';
+import { Base64 } from './base64.js';
+import { Hex } from './hex.js';
+import { Defs } from './defs.js';
+import { tags } from './tags.js';
 
 const
-    ASN1 = require('./asn1'),
-    ASN1DOM = require('./dom'),
-    Base64 = require('./base64'),
-    Hex = require('./hex'),
-    Defs = require('./defs'),
-    tags = require('./tags'),
     maxLength = 10240,
     reHex = /^\s*(?:[0-9A-Fa-f][0-9A-Fa-f]\s*)+$/,
     tree = id('tree'),
@@ -21,7 +15,6 @@ const
     area = id('area'),
     file = id('file'),
     examples = id('examples'),
-    selectTheme = id('theme-select'),
     selectDefs = id('definitions'),
     selectTag = id('tags');
 
@@ -47,13 +40,13 @@ function checkbox(name) {
 function show(asn1) {
     tree.innerHTML = '';
     dump.innerHTML = '';
-    tree.appendChild(asn1.toDOM());
+    let ul = document.createElement('ul');
+    ul.setAttribute('class', 'treecollapse');
+    tree.appendChild(ul);
+    ul.appendChild(asn1.toDOM());
     if (wantHex.checked) dump.appendChild(asn1.toHexDOM(undefined, trimHex.checked));
 }
-function decode(der, offset) {
-    // store the DER buffer of asn1 in window to copy it completely into clipboard on dumpcopy
-    window.derBuffer = der;
-
+export function decode(der, offset) {
     offset = offset || 0;
     try {
         const asn1 = ASN1DOM.decode(der, offset);
@@ -112,7 +105,7 @@ function decode(der, offset) {
         text(tree, e);
     }
 }
-function decodeText(val) {
+export function decodeText(val) {
     try {
         let der = reHex.test(val) ? Hex.decode(val) : Base64.unarmor(val);
         decode(der);
@@ -121,7 +114,7 @@ function decodeText(val) {
         dump.innerHTML = '';
     }
 }
-function decodeBinaryString(str) {
+export function decodeBinaryString(str) {
     let der;
     try {
         if (reHex.test(str)) der = Hex.decode(str);
@@ -134,58 +127,39 @@ function decodeBinaryString(str) {
     }
 }
 // set up buttons
-id('butDecode').onclick = function () {
-    decodeText(area.value);
+const butClickHandlers = {
+    butDecode: () => {
+        decodeText(area.value);
+    },
+    butClear: () => {
+        area.value = '';
+        file.value = '';
+        tree.innerHTML = '';
+        dump.innerHTML = '';
+        selectDefs.innerHTML = '';
+        hash = window.location.hash = '';
+    },
+    butExample: () => {
+        console.log('Loading example:', examples.value);
+        let request = new XMLHttpRequest();
+        request.open('GET', 'examples/' + examples.value, true);
+        request.onreadystatechange = function () {
+            if (this.readyState !== 4) return;
+            if (this.status >= 200 && this.status < 400) {
+                area.value = this.responseText;
+                decodeText(this.responseText);
+            } else {
+                console.log('Error loading example.');
+            }
+        };
+        request.send();
+    },
 };
-id('butClear').onclick = function () {
-    area.value = '';
-    file.value = '';
-    tree.innerHTML = '';
-    dump.innerHTML = '';
-    hash = window.location.hash = '';
-};
-id('butExample').onclick = function () {
-    console.log('Loading example:', examples.value);
-    let request = new XMLHttpRequest();
-    request.open('GET', 'examples/' + examples.value, true);
-    request.onreadystatechange = function () {
-        if (this.readyState !== 4) return;
-        if (this.status >= 200 && this.status < 400) {
-            area.value = this.responseText;
-            decodeText(this.responseText);
-        } else {
-            console.log('Error loading example.');
-        }
-    };
-    request.send();
-};
-// set dark theme depending on OS settings
-function setTheme() {
-    let storedTheme = localStorage.getItem('theme');
-    let theme = 'os';
-    if (storedTheme)
-        theme = storedTheme;
-    selectTheme.value = theme;
-    if (theme == 'os') {
-        let prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-        theme = prefersDarkScheme.matches ? 'dark': 'light';
-    }
-    if (theme == 'dark') {
-        const css1 = id('theme-base');
-        const css2 = css1.cloneNode();
-        css2.id = 'theme-override';
-        css2.href = 'index-' + theme + '.css';
-        css1.parentElement.appendChild(css2);
-    } else {
-        const css2 = id('theme-override');
-        if (css2) css2.remove();
-    }
+for (const [name, onClick] of Object.entries(butClickHandlers)) {
+    let elem = id(name);
+    if (elem)
+        elem.onclick = onClick;
 }
-setTheme();
-selectTheme.addEventListener('change', function () {
-    localStorage.setItem('theme', selectTheme.value);
-    setTheme();
-});
 // this is only used if window.FileReader
 function read(f) {
     area.value = ''; // clear text area, will get b64 content
@@ -240,46 +214,17 @@ selectTag.onchange = function (ev) {
     window.location.href = 'https://rawcdn.githack.com/lapo-luchini/asn1js/' + tag + '/index.html';
 };
 
-// register context menu function
-document.getElementById('btnCopyHex').onclick = function (event) {
-    let contextMenu = document.getElementById('contextmenu');
-    let node = contextMenu.node;
-    const pos = parseInt(node.getAttribute('pos'));
-    const end = parseInt(node.getAttribute('end'));
-    const hex = node.asn1.buf2hex(window.derBuffer.subarray(pos, end));
-    navigator.clipboard.writeText(hex);
-    contextMenu.style.visibility = 'hidden';
-    event.stopPropagation();
-};
-
-document.getElementById('btnCopyString').onclick = function (event) {
-    let contextMenu = document.getElementById('contextmenu');
-    let node = contextMenu.node;
-    const pos = parseInt(node.getAttribute('pos'));
-    const end = parseInt(node.getAttribute('end'));
-    let result = ASN1.decode(window.derBuffer.subarray(pos, end));
-    let type = result.typeName();
-    switch (type) {
-        case 'SET':
-        case 'SEQUENCE':
-            alert('Selected value is not a String!');
-            break;
-        default: 
-            navigator.clipboard.writeText(result.content());
-    }
-    contextMenu.style.visibility = 'hidden';
-    event.stopPropagation();
-};
-
-document.getElementById('btnCopyPretty').onclick = function (event) {
-    let contextMenu = document.getElementById('contextmenu');
-    let node = contextMenu.node;
-    const pos = parseInt(node.getAttribute('pos'));
-    const end = parseInt(node.getAttribute('end'));
-    let result = ASN1.decode(window.derBuffer.subarray(pos, end));
-    navigator.clipboard.writeText(result.toPrettyString());
-    contextMenu.style.visibility = 'hidden';
-    event.stopPropagation();
-};
-
-});
+// zoom fix to have straight lines in treeview
+if (window.devicePixelRatio >= 2  ) {
+    let treecollapse = document.querySelector(':root');
+    treecollapse.style.setProperty('--zoom-fix', '-0.8px');
+} else if (window.devicePixelRatio >= 1.5  ) {
+    let treecollapse = document.querySelector(':root');
+    treecollapse.style.setProperty('--zoom-fix', '-0.5px');
+} else if (window.devicePixelRatio <= 0.81  ) {
+    let treecollapse = document.querySelector(':root');
+    treecollapse.style.setProperty('--zoom-fix', '-1.4px');
+} else if (window.devicePixelRatio <= 0.9  ) {
+    let treecollapse = document.querySelector(':root');
+    treecollapse.style.setProperty('--zoom-fix', '-1.5px');
+}
